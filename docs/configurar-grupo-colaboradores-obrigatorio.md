@@ -1,12 +1,12 @@
 # Configurar controles de permanência no grupo de colaboradores
 
 Este guia explica como configurar o grupo
-`colaboradores@lamce.coppe.ufrj.br` para que:
+`example_group@dominio.com` para que:
 
 - os colaboradores sejam adicionados como membros;
 - cada mensagem aceita e distribuída pelo grupo seja solicitada como e-mail
   individual para o membro;
-- a saída voluntária seja restringida e testada no ambiente da LAMCE;
+- a saída voluntária seja restringida e testada no ambiente da organização;
 - usuários sem acesso ao Google Groups não consigam alterar a assinatura para
   **No email**.
 
@@ -18,14 +18,14 @@ dos menus são apresentados em inglês, como aparecem no Google Admin Console.
 > dentro do grupo de produção não isola o risco. A documentação oficial do
 > Google é contraditória sobre a garantia de impedir a auto-remoção de membros
 > individuais. A configuração existe na Groups Settings API, mas precisa ser
-> validada no ambiente da LAMCE e complementada por reconciliação periódica.
+> validada no ambiente da organização e complementada por reconciliação periódica.
 
 ## 1. Resultado esperado
 
 Ao terminar:
 
 1. O grupo continuará sendo
-   `colaboradores@lamce.coppe.ufrj.br`.
+   `example_group@dominio.com`.
 2. Novos colaboradores serão adicionados como `MEMBER`.
 3. A preferência de entrega dos membros será configurada como `ALL_MAIL`.
 4. O grupo terá `whoCanLeaveGroup` definido como `NONE_CAN_LEAVE`.
@@ -53,7 +53,7 @@ O usuário ainda pode apagar o e-mail ou criar um filtro no Gmail.
 A documentação oficial atual não descreve uma configuração por grupo que impeça
 o próprio membro de escolher **No email**.
 
-Para `colaboradores@lamce.coppe.ufrj.br`:
+Para `example_group@dominio.com`:
 
 - impedir a saída é uma configuração específica do grupo;
 - configurar `ALL_MAIL` é uma configuração específica de cada membro;
@@ -94,7 +94,7 @@ Se os colaboradores já não conseguem acessar os grupos internos em
 | `SCOPES` | Lista de permissões OAuth solicitadas pelo código. |
 | `with_subject(...)` | Parte do código que escolhe o usuário do domínio em nome de quem a Service Account atuará. |
 | `OWNER`, `MANAGER`, `MEMBER` | Papéis do grupo, do mais privilegiado ao membro comum. |
-| Tenant | Organização Google Workspace administrada, neste caso a da LAMCE. |
+| Tenant | Organização Google Workspace que está sendo administrada. |
 
 ## 4. Antes de começar
 
@@ -102,7 +102,7 @@ Separe:
 
 - uma conta administrativa autorizada;
 - o endereço principal exato do grupo:
-  `colaboradores@lamce.coppe.ufrj.br`;
+  `example_group@dominio.com`;
 - um grupo de teste com configurações equivalentes;
 - uma conta comum para teste;
 - o nome da **Organizational Unit** dos colaboradores;
@@ -122,7 +122,7 @@ Também confirme que o grupo existe:
 
 1. Entre em [Google Admin Console](https://admin.google.com).
 2. Abra **Menu > Directory > Groups**.
-3. Pesquise por `colaboradores@lamce.coppe.ufrj.br`.
+3. Pesquise por `example_group@dominio.com`.
 4. Abra o grupo.
 5. Confirme que esse é o endereço principal, e não apenas um alias.
 
@@ -136,7 +136,7 @@ e valide primeiro no grupo de teste; só depois repita no grupo de produção.
 | Conferir e alterar o grupo | Administrador com privilégio para ler e gerenciar configurações e membros de grupos. |
 | Preparar Domain-Wide Delegation | Super Admin, somente durante a preparação. |
 | Habilitar APIs no Google Cloud | Administrador autorizado no projeto correto do Google Cloud. |
-| Executar o projeto diariamente | `tic-exec` com papel personalizado que cubra somente criação de usuários e gerenciamento de membros. |
+| Executar o projeto diariamente | `workspace-automation-executor` com papel personalizado que cubra somente criação de usuários e gerenciamento de membros. |
 | Validar o comportamento | Conta comum em um grupo de teste equivalente. |
 
 Evite usar Super Admin para executar o script diariamente.
@@ -188,7 +188,7 @@ Antes de alterar, registre o valor atual:
 4. No campo `groupUniqueId`, informe:
 
    ```text
-   colaboradores@lamce.coppe.ufrj.br
+   example_group@dominio.com
    ```
 
 5. Abra **Show scopes**.
@@ -216,7 +216,7 @@ Use somente o valor retornado pela consulta. Os valores documentados incluem
 3. Em `groupUniqueId`, informe:
 
    ```text
-   colaboradores@lamce.coppe.ufrj.br
+   example_group@dominio.com
    ```
 
 4. No corpo da solicitação, use:
@@ -246,7 +246,7 @@ Use somente o valor retornado pela consulta. Os valores documentados incluem
 
 Essa propriedade é aplicada ao grupo inteiro. Um administrador com privilégios
 para gerenciar grupos ainda poderá remover membros. O teste da seção 11 é
-obrigatório para confirmar o efeito no ambiente da LAMCE.
+obrigatório para confirmar o efeito no ambiente da organização.
 
 ### 6.3 Confirmar que a alteração foi salva
 
@@ -309,8 +309,8 @@ Faça primeiro com a conta de teste:
 4. Preencha:
 
    ```text
-   groupKey: colaboradores@lamce.coppe.ufrj.br
-   memberKey: email-da-conta-de-teste@lamce.coppe.ufrj.br
+   groupKey: example_group@dominio.com
+   memberKey: usuario_teste@dominio.com
    ```
 
 5. Clique em **Execute**.
@@ -323,7 +323,7 @@ Faça primeiro com a conta de teste:
 
    ```json
    {
-     "email": "email-da-conta-de-teste@lamce.coppe.ufrj.br",
+     "email": "usuario_teste@dominio.com",
      "role": "VALOR_EXATO_RETORNADO_PELO_GET",
      "delivery_settings": "ALL_MAIL"
    }
@@ -411,7 +411,7 @@ colaboradores > My membership settings > Subscription
 
 Nessa tela, o Google permite escolher **No email**. A documentação oficial atual
 não descreve um bloqueio específico apenas para
-`colaboradores@lamce.coppe.ufrj.br`.
+`example_group@dominio.com`.
 
 ## 9. Desativar o Google Groups para os colaboradores
 
@@ -510,7 +510,7 @@ https://www.googleapis.com/auth/apps.groups.settings
 
 O escopo `admin.directory.user` não é necessário para configurar o grupo; ele
 continua na lista porque o projeto também cria contas de usuário. Para a
-operação diária, `tic-exec` não deve usar Super Admin. Como o projeto cria
+operação diária, `workspace-automation-executor` não deve usar Super Admin. Como o projeto cria
 usuários e gerencia membros de grupos, use um papel personalizado com os
 privilégios mínimos dessas duas operações, ou separe as identidades
 administrativas por responsabilidade. O papel Groups Admin sozinho não cobre a
@@ -573,7 +573,7 @@ Não use inicialmente uma conta importante. Utilize um usuário de teste.
 1. Envie uma mensagem simples para:
 
    ```text
-   colaboradores@lamce.coppe.ufrj.br
+   example_group@dominio.com
    ```
 
 2. Confirme que ela chegou à caixa de entrada da conta de teste.
@@ -588,7 +588,7 @@ Não use inicialmente uma conta importante. Utilize um usuário de teste.
 2. Envie também uma mensagem para:
 
    ```text
-   colaboradores+unsubscribe@lamce.coppe.ufrj.br
+   example_group+unsubscribe@dominio.com
    ```
 
 3. Volte ao Admin Console.
@@ -597,7 +597,7 @@ Não use inicialmente uma conta importante. Utilize um usuário de teste.
 
 O Google pode enviar uma confirmação ou uma mensagem de erro para o comando
 `+unsubscribe`. Registre o resultado real. Se a associação for removida, a
-configuração não atende sozinha ao requisito da LAMCE e será necessário usar
+configuração não atende sozinha ao requisito da organização e será necessário usar
 reconciliação automática.
 
 ### Teste 4 — segunda entrega
@@ -689,7 +689,7 @@ Possíveis causas:
 Confirme:
 
 - o endereço principal do grupo;
-- a grafia de `colaboradores@lamce.coppe.ufrj.br`;
+- a grafia de `example_group@dominio.com`;
 - se a conta administrativa pertence ao mesmo Workspace;
 - se foi usado um alias no lugar do endereço principal.
 
@@ -728,7 +728,7 @@ por grupo. As opções são:
 
 ## 14. Operação recomendada
 
-Para o ambiente da LAMCE:
+Para o ambiente da organização:
 
 1. Aplique `NONE_CAN_LEAVE` após o piloto e audite periodicamente se o valor
    continua configurado.
